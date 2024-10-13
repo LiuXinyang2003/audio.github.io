@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>数字人</title>
 		<style>
 			/* 设置基本样式 */
@@ -21,7 +21,7 @@
 				overflow: hidden;
 				display: flex;
 				flex-direction: column;
-				background-image: url('http://106.227.89.57:3000/file-1728540519064-475548548.jpg');
+				background-image: url('https://image.yuanqilian.com:4443/f0da8b3b1fd52018857aeac3c43fa61c');
 				background-size: cover;
 				background-repeat: no-repeat;
 			}
@@ -195,10 +195,13 @@
 				border-radius: 10px;
 				color: #000;
 				background-image: linear-gradient(to right, #ffffff, #fffff1);
+				display: flex;
+				flex-direction: column;
+
 			}
 
 			.message-input {
-				width: 100%%;
+				width: 100%;
 				font-size: 14px;
 				line-height: 15px;
 				/* border: solid 1px #999; */
@@ -209,7 +212,7 @@
 			}
 
 			.message-input:empty::before {
-				content: "输入消息...";
+				content: "Enter message...";
 				color: #999999;
 			}
 
@@ -239,6 +242,7 @@
 			}
 
 			#journeyButton {
+				width: 80%;
 				position: absolute;
 				top: 50%;
 				left: 50%;
@@ -259,11 +263,11 @@
 			}
 
 			#loadingScreen {
+				width: 80%;
 				position: absolute;
 				top: 50%;
 				left: 50%;
 				transform: translate(-50%, -50%);
-				display: none;
 				text-align: center;
 			}
 
@@ -274,6 +278,7 @@
 				background-color: #eee;
 				border-radius: 10px;
 				overflow: hidden;
+				margin: 0 auto;
 			}
 
 			.progress-bar div {
@@ -284,6 +289,7 @@
 			}
 
 			.standardQuestion {
+				color: #5f6267;
 				font-size: 15px;
 				padding-left: 10px;
 			}
@@ -298,7 +304,10 @@
 			.item {
 				height: 20px;
 				line-height: 20px;
-				border-bottom: 1px #000 solid;
+				border-bottom: 1px #f0f2f6 solid;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 
 			.main-content {
@@ -306,20 +315,17 @@
 				overflow-y: scroll;
 			}
 
-			.box {
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-			}
-
-
-			.img-content {
-				height: 100%;
-			}
-
-			.img-content img {
-				height: 100%;
+			#recording-indicator {
+				z-index: 99;
+				background-color: #999999;
+				color: #fff;
+				border-radius: 15px;
+				padding: 10px;
+				font-size: 20px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
 			}
 		</style>
 	</head>
@@ -336,14 +342,22 @@
 
 		<div class="chat-container">
 
-			<!-- <button id="journeyButton" onclick="start1()">开启数字人之旅</button> -->
+			<button id="journeyButton" onclick="start1()">Embark on the journey of digital humans</button>
+			<div id="recording-indicator" style="display:none;">Recording in progress...</div>
 			<div>
 				<input id="subscriptionKeyInput" value="" type="text" style="display:none;" />
 			</div>
 
+			<div id="loadingScreen" style="display:none;">
+				<h1>Loading in progress...</h1>
+				<div class="progress-bar">
+					<div></div>
+				</div>
+			</div>
+
 			<div class="main-content">
 				<!-- 对话框内容 -->
-				<div class="chat-display">
+				<div class="chat-display" style="display:none;">
 					<!-- 对话展示框将在这里 -->
 					<div class="scroll-list">
 
@@ -352,20 +366,18 @@
 				<div class="part2">
 					<!-- AI机器人 -->
 					<div class="box" style="height: 100%;width: 120px;z-index: 999;">
-						<div class="img-content">
-							<img src="http://106.227.89.57:3000/file-1728542621381-714110791.png" alt="" />
-						</div>
 					</div>
 					<!-- 推荐问题 -->
-					<div class="list-container">
+					<div class="list-container" style="display:none;">
 						<div class="list-container-header">
 							<div style="height: 100%;display: flex;flex-direction: row;align-items: center;">
 								<img style="height: 100%;display: flex;align-items: center; visibility: hidden;"
 									src="https://image.yuanqilian.com:4443/2f1a758018721c4d412d95ef06f15e05" alt="" />
-								<div class="textColor">试试这样问我</div>
+								<div class="textColor">Try asking me this way</div>
 							</div>
-							<div id="nextBatch" style="display: flex;flex-direction: row;align-items: center;  opacity: 0;
-  pointer-events: auto;">换一批</div>
+							<div id="nextBatch"
+								style="display: flex;flex-direction: row;align-items: center;  opacity: 0;pointer-events: auto;">
+								Change a batch</div>
 							<!-- <button id="nextBatch">换一批</button> -->
 						</div>
 						<!-- <hr /> -->
@@ -373,14 +385,14 @@
 							<div id="dataContainer" class="dataContainer"></div>
 						</div>
 					</div>
-					<!-- <button id="myButton">跳转按钮</button> -->
+					<!-- 					<button id="myButton">跳转按钮</button> -->
 				</div>
 			</div>
 			<!-- 输入内容，输入框输入及语音输入 -->
-			<div class="chat-input">
+			<div class="chat-input" style="display:none;">
 				<!-- <input type="text" id="message-input" placeholder="请输入内容"> -->
 				<div style="display: flex;flex-direction: row;border: 1px black solid; border-radius: 10px;width: 90%;
-				align-items: center;justify-content: center;">
+				align-items: center;justify-content: center;padding-left: 15px;">
 					<!-- 					<div style="width: 10%">
 						<img style="width: 100%;display: flex;align-items: center;"
 							src="https://image.yuanqilian.com:4443/536146e7def2fd0f7e4f4f00bf4ce6d4"
@@ -391,23 +403,23 @@
 					</div>
 					<!-- <button id="voiceButton">按住说话</button> -->
 
-					<!-- 					<div style="width: 10%;display: flex;align-items: center;">
+					<div style="width: 10%;display: flex;align-items: center;">
 						<img style="width: 100%;" id="start"
 							src="https://image.yuanqilian.com:4443/6b226505894df10f895955865003bea4" alt="" />
-							</div> -->
+					</div>
 					<!-- <img onclick="submit()" style="width: 100%;" src="https://image.yuanqilian.com:4443/0b78c852442ecad1ecc62bfac7917200" alt="" /> -->
 					<!-- <button onclick="submit()">发送</button> -->
 
-					<!-- 										<button class="mic-button" id="start">
+					<!-- 					<button class="mic-button" id="start">
 						<div>语音</div>
 					</button> -->
-					<!-- 					<button class="mic-button end_btn" id="end">
-						<div>结束</div>
-					</button> -->
+					<button class="mic-button end_btn" id="end" style="display: none;">
+						<div>end</div>
+					</button>
 					<div style="width: 10%;display: flex;align-items: center;">
 						<img onclick="submit()" style="width: 100%;"
 							src="https://image.yuanqilian.com:4443/04e1752643bd38807a7036c713ff0e7a" alt="" />
-						<!-- <img onclick="submit()" style="width: 100%;" src="https://image.yuanqilian.com:4443/0b78c852442ecad1ecc62bfac7917200" alt="" /> -->
+						<!-- <img onclick="submit()" style="width: 100%;" src="https://image.yuanqilian.com:4443/0b78c852442ecad1ecc62bfac7917200" alt="" />
 						<!-- <button onclick="submit()">发送</button> -->
 					</div>
 				</div>
@@ -415,11 +427,23 @@
 			</div>
 		</div>
 		<script type="text/javascript">
+			// document.getElementById('myButton').addEventListener('click', function() {
+			// 	window.location.href =
+			// 		'https://brtmap.com/bb/v4/c-h5v4/main/v4.0.0/index.html#/search?sign=f7be5d9542bb412994b84d276ed3f2c0&name=卫生间';
+			// });
+
 			document.addEventListener('DOMContentLoaded', function() {
-				
-				
+
+				// const buttons = document.querySelectorAll('.myButton');
+				// buttons.forEach(button => {
+				// 	button.addEventListener('click', function() {
+				// 		console.log(9304394);
+				// 		window.location.href =
+				// 			'https://brtmap.com/bb/v4/c-h5v4/main/v4.0.0/index.html#/search?sign=f7be5d9542bb412994b84d276ed3f2c0&name=卫生间';
+				// 	});
+				// });
 				const scrollList = document.querySelector('.scroll-list');
-				
+
 				// 使用事件委托给按钮添加点击事件
 				scrollList.addEventListener('click', function(event) {
 					if (event.target && event.target.classList.contains('myButton')) {
@@ -428,7 +452,7 @@
 							`https://brtmap.com/bb/v4/c-h5v4/main/v4.0.0/index.html#/search?sign=f7be5d9542bb412994b84d276ed3f2c0&name=${sub}`;
 					}
 				});
-				
+
 				scrollList.addEventListener('click', function(event) {
 					if (event.target && event.target.classList.contains('myButton1')) {
 						console.log(9304394, resultData);
@@ -436,6 +460,7 @@
 							`https://brtmap.com/bb/v4/c-h5v4/main/v4.0.0/index.html#/map?sign=f7be5d9542bb412994b84d276ed3f2c0&page=map&type=1&poiId=${resultData.poiId}`;
 					}
 				});
+
 				const urlParams = new URLSearchParams(window.location.search);
 				const paramValue = urlParams.get('logs');
 				const add = JSON.parse(paramValue)
@@ -466,9 +491,24 @@
 
 		<script>
 			// 模拟数据
-			const chatList = [];
-
-			const inputList = []
+			const chatList = [
+				// {
+				// 	date: '2024-09-10',
+				// 	type: 'normal',
+				// 	msgId: 1,
+				// 	nickname: 'Alice',
+				// 	avatar: 'https://image.yuanqilian.com:4443/2e0a3dd4693e4ed537410cad5c59c0f5',
+				// 	message: 'Hello!'
+				// },
+				// {
+				// 	date: '2024-09-11',
+				// 	type: 'custom',
+				// 	msgId: 2024,
+				// 	nickname: 'Bob',
+				// 	avatar: 'https://image.yuanqilian.com:4443/2e0a3dd4693e4ed537410cad5c59c0f5',
+				// 	message: 'How are you?'
+				// }
+			];
 
 
 
@@ -480,7 +520,7 @@
 			// 渲染函数
 			const renderedMessages = [];
 
-			// let tempMessages = [];
+			let tempMessages = [];
 
 			function renderChat() {
 				const scrollList = document.querySelector('.scroll-list');
@@ -497,15 +537,14 @@
 						if (item.type === 'custom') {
 							customElement = `<div class="row tips-text"></div>`;
 						}
+
 						let mainElement = '';
-						console.log(48544)
-						console.log(login.id, item.msgId)
 						if (login.id != item.msgId) {
-							console.log("AI机器人回复")
 							isPreviousFromFriend = true;
-							// tempMessages.push(item.message);
-							if (IsLoacationState1 == 2) {
-								IsLoacationState1 = 0;
+							tempMessages.push(item.message);
+							console.log(IsLoacationState)
+							console.log(IsLoacationState1)
+							if (IsLoacationState == 1) {
 								mainElement = `<div class="row" style="height: auto;">
 								                <div class="head-friend">
 								                    <img class="avatar" src="${item.avatar}">
@@ -513,9 +552,23 @@
 								                <div>
 								                    <div class="AInick">${item.nickname}</div>
 								                    <div class="message msg-friend">
-								                        <div><span>${item.message}</span></div>
-														<button class="myButton1">跳转藏品</button>
-														<button onclick="button2()">打断语音</button>
+								                        <div><span>${tempMessages.join(' ')}</span></div>
+														<button class="myButton">Jump button</button>
+														<button onclick="button2()">Interrupt speech</button>
+								                    </div>
+								                </div>
+								            </div>`;
+							} else if (IsLoacationState1 == 2 && IsLoacationState != 1) {
+								mainElement = `<div class="row" style="height: auto;">
+								                <div class="head-friend">
+								                    <img class="avatar" src="${item.avatar}">
+								                </div>
+								                <div>
+								                    <div class="AInick">${item.nickname}</div>
+								                    <div class="message msg-friend">
+								                        <div><span>${tempMessages.join(' ')}</span></div>
+														<button class="myButton1">Jump to Collectibles</button>
+														<button onclick="button2()">Interrupt speech</button>
 								                    </div>
 								                </div>
 								            </div>`;
@@ -527,22 +580,24 @@
 								                <div>
 								                    <div class="AInick">${item.nickname}</div>
 								                    <div class="message msg-friend">
-								                        <div><span>${item.message}</span></div>
+								                        <div><span>${tempMessages.join(' ')}</span></div>
+														<button onclick="button2()">Interrupt speech</button>
 								                    </div>
 								                </div>
 								            </div>`;
 							}
-
-							// console.log('tempMessages:', tempMessages);
+							console.log("主要元素", mainElement)
+							console.log('tempMessages:', tempMessages);
 							// 检查是否与上一个节点的 mainElement 重复
-							// const lastChild = scrollList.lastChild;
-							// console.log(lastChild);
-							// if (lastChild && lastChild.innerHTML && lastChild.innerHTML.includes('景博AI数字人')) {
-							// 	scrollList.removeChild(lastChild);
-							// }
+							const lastChild = scrollList.lastChild;
+							console.log(lastChild);
+							if (lastChild && lastChild.innerHTML && lastChild.innerHTML.includes(
+									'Jingbo AI Digital Person')) {
+								scrollList.removeChild(lastChild);
+							}
 						} else {
 							isPreviousFromFriend = false;
-							// tempMessages = [];
+							tempMessages = [];
 							mainElement = `<div class="row row-self" style="height: auto;">
 			                                    <div class="head-self">
 			                                        <img class="avatar" src="${item.avatar}">
@@ -570,12 +625,12 @@
 		</script>
 
 		<script>
-			// 获取元素
-			let sub = '';
+			let sub = ''
 			let IsLoacationState = 0;
 			let IsLoacationState1 = 0;
-			let product_name = [];
-			let resultData = '';
+			let en_DataInfo = [];
+			let resultData = {};
+			// 获取元素
 			const messageInput = document.querySelector('.message-input');
 			// const submitBtn = document.getElementById('submit-btn');
 			const chatDisplay = document.querySelector('.chat-display');
@@ -660,7 +715,6 @@
 			var count
 			const tobotytom = document.querySelector('.message-input')
 			tobotytom.addEventListener('focus', (event) => {
-				console.log(11111)
 				const box1 = document.querySelector('.main-content');
 				box1.scrollTo(0, box1.scrollHeight - box1.clientHeight)
 				const box2 = document.querySelector('.chat-display');
@@ -681,7 +735,7 @@
 					var signatureInput = document.getElementById('signature');
 					var projectIdInput = document.getElementById('projectId');
 					signatureInput.value = data.data;
-					projectIdInput.value = '6c316363-7ae5-11ef-a6c8-27951f5caff7';
+					projectIdInput.value = '7ded6353-885d-11ef-9cbf-37ef51ac5ef0';
 					// start1();
 					return document.getElementById('signature').value;
 				} catch (error) {
@@ -723,7 +777,7 @@
 							'Content-Type': 'application/json'
 						},
 						body: JSON.stringify({
-							'projectId': '6c316363-7ae5-11ef-a6c8-27951f5caff7'
+							'projectId': '7ded6353-885d-11ef-9cbf-37ef51ac5ef0'
 						}),
 						mode: 'cors',
 						cache: 'no-cache',
@@ -769,8 +823,6 @@
 					});
 			}
 			getQuestionList();
-			getProductList();
-			// getQuota();
 
 			async function getProductList() {
 				await fetch('https://sg.jdzcnc.com:3020/api/exhibits/htmlGetProduct', {
@@ -778,8 +830,9 @@
 					})
 					.then(response => response.json())
 					.then(data => {
+						console.log(data)
 						//console.log(data.data);
-						product_name = data.data;
+						en_DataInfo = data.data;
 					})
 					.catch(error => {
 						console.error('Error:', error);
@@ -787,30 +840,47 @@
 			}
 
 			function findMatchingProductNameAndPoiId(item) {
-				for (const element of product_name) {
-					if (item.standardQuestion.includes(element.product_name)) {
+				console.log(en_DataInfo)
+				console.log(item)
+				for (const element of en_DataInfo) {
+					if (item.standardQuestion.includes(element.english_name)) {
 						return {
-							product_name: element.product_name,
+							english_name: element.english_name,
 							poiId: element.poiId
 						};
 					}
 				}
 				return null;
 			}
-
+			
+			function findMatchingRoute(item) {
+				console.log(item)
+				item = item.toLowerCase()
+				console.log(item)
+				console.log(en_DataInfo)
+				for (const element of en_DataInfo) {
+					if (item.includes(element.english_name.toLowerCase())) {
+						const name = element.product_name
+						console.log(name)
+						return name
+					}
+				}
+				return null;
+			}
 
 			function handleItemClick(item) {
 				console.log(`点击了：${item.standardQuestion}`);
-				
-
 
 				resultData = findMatchingProductNameAndPoiId(item);
+				console.log(resultData)
+				console.log(IsLoacationState1)
 				if (resultData) {
 					IsLoacationState1 = 2
-					console.log(resultData.product_name, resultData.poiId);
+					console.log(resultData.english_name, resultData.poiId);
 				} else {
 					console.log('未找到匹配项');
 				}
+				
 
 				var signature = document.getElementById('signature').value;
 				var projectId = document.getElementById('projectId').value;
@@ -839,67 +909,21 @@
 				console.log(question);
 				chatList.push(question);
 				console.log(chatList);
-				axios.post('https://sg.jdzcnc.com:3020/api/AImodels/search1', {
-						searchData: item.standardQuestion
-					})
-					.then(response => {
-						console.log(response.data.data);
-						answer = {
-							date1: now1 + '-' + now2 + ' ' + hour + ':' + minu,
-							date: response.data.data.date,
-							type: 'custom',
-							msgId: response.data.data.msgId,
-							nickname: response.data.data.nickname,
-							avatar: response.data.data.avatar,
-							message: response.data.data.message
-						}
-						
-						console.log(response.data.data.message)
-						IsLoacationState = 0
-						const originalString = response.data.data.message;
-						const targetString = "具体路线如下：";
-						const index = originalString.indexOf(targetString);
-						
-						console.log("参数为", index)
-						if (index !== -1) {
-							console.log("包含具体信息", IsLoacationState)
-							IsLoacationState = 1
-							console.log("包含具体信息", IsLoacationState)
-							const result = originalString.substring(0, index);
-							console.log(result);
-							sub = result
-						} else {
-							console.log("未找到特定字符串。");
-						}
-						chatList.push(answer);
-						console.log(answer);
-						chatList.push(answer);
-						console.log(chatList);
-						renderChat();
-						chatDisplay.scrollTop = chatDisplay.scrollHeight;
-					})
-					.catch(error => {
-						console.error('Error:', error);
-					});
-
 				renderChat();
 				chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
-				// renderChat();
-				// chatDisplay.scrollTop = chatDisplay.scrollHeight;
+				// 清空输入框
+				messageInput.value = '';
 
-				// // 清空输入框
-				// messageInput.value = '';
-
-				// const Client = new window.RTCInteraction({
-				// 	mountClass: "box",
-				// 	signature: signature,
-				// 	projectId: projectId,
-				// 	// includeUI: true,
-				// });
-				// Client.breakTalking();
-				// Client.ask(`${item.standardQuestion}`, false)
-				// // 在这里执行你想要的操作
+				const Client = new window.RTCInteraction({
+					mountClass: "box",
+					signature: signature,
+					projectId: projectId,
+					// includeUI: true,
+				});
+				Client.breakTalking();
+				Client.ask(`${item.standardQuestion}`, false)
+				// 在这里执行你想要的操作
 			}
 		</script>
 		<script>
@@ -913,6 +937,7 @@
 					projectId: projectId,
 					// includeUI: true,
 				});
+				Client.breakTalking()
 				Client.endRTC();
 				stop1();
 			});
@@ -926,6 +951,7 @@
 					projectId: projectId,
 					// includeUI: true,
 				});
+				Client.breakTalking()
 				Client.endRTC();
 				stop1();
 			});
@@ -980,11 +1006,21 @@
 					}
 				})
 			}
+			const button2 = (e) => {
+				const Client = new window.RTCInteraction({
+					mountClass: "box",
+					signature: signature,
+					projectId: projectId,
+					// includeUI: true,
+				});
+				Client.breakTalking();
+			}
 			const start1 = async (e) => {
 				//signature获取通过/openapi/signature/gen，详见API接⼊说明文档
 				await audio();
-
 				await getQuota()
+				await getProductList();
+				console.log(en_DataInfo)
 				console.log("count", count)
 				if (count > 0) {
 					document.getElementById('loadingScreen').style.display = 'block';
@@ -1023,14 +1059,12 @@
 							},
 							onPlayStream(v3Orv4) {
 								console.log("play");
-
 								console.log("v3Orv4", v3Orv4);
 								document.querySelector('.list-container').style.display = 'flex';
 								document.querySelector('.chat-input').style.display = 'flex';
 								document.querySelector('.chat-display').style.display = 'block';
 								document.getElementById('loadingScreen').style.display = 'none';
 							},
-
 							onStopStream() {
 								console.log("stop");
 							},
@@ -1058,21 +1092,36 @@
 									date: now1 + '-' + now2 + ' ' + hour + ':' + minu + ':' + sec,
 									type: 'custom',
 									msgId: 0,
-									nickname: '景博AI数字人-紫玲',
+									nickname: 'Jingbo AI Digital Person - Ziling',
 									avatar: 'https://image.yuanqilian.com:4443/23d420c43a469244162f6525c97b51ec',
-									message: talkRes.content
+									message: talkRes.text
 								};
 								console.log(answer);
-								// initChat()
-								// if (state === 1) {
-								// 	inputList.push(answer);
-								// 	inputChat()
-								// } else {
-								// 	chatList.push(answer);
-								// 	console.log(chatList);
-								// }
+								const requestText = talkRes.originalAnswer.requestText
+								console.log("类出口",requestText)
+								console.log(talkRes.text)
+								IsLoacationState = 0
+								const originalString = talkRes.text;
+								console.log()
+								const targetString = "as follows";
+								const index = originalString.indexOf(targetString);
+
+								console.log("参数为", index)
+								if (index !== -1) {
+									console.log("包含具体信息", IsLoacationState)
+									IsLoacationState = 1
+									console.log("包含具体信息", IsLoacationState)
+									sub = findMatchingRoute(requestText)
+									console.log(sub)
+									// const result = originalString.substring(0, index);
+									// console.log(result);
+									// sub = result
+								} else {
+									console.log("未找到特定字符串。");
+								}
 								chatList.push(answer);
 								renderChat();
+
 								chatDisplay.scrollTop = chatDisplay.scrollHeight;
 								// }
 								// 清空输入框
@@ -1084,7 +1133,9 @@
 						});
 					}, 1500);
 				} else {
-					alert("网路繁忙")
+					// alert("网路繁忙")
+					console.log("网络错误")
+					window.loaction.herf = 'https://liuxinyang2003.github.io/audio.github.io/'
 				}
 
 
@@ -1100,6 +1151,18 @@
 					return
 				} else {
 					console.log("待提交信息", element);
+				}
+				let item = {};
+				item.standardQuestion = element;
+
+				resultData = findMatchingProductNameAndPoiId(item);
+				console.log(resultData)
+				console.log(IsLoacationState1)
+				if (resultData) {
+					IsLoacationState1 = 2
+					console.log(resultData.english_name, resultData.poiId);
+				} else {
+					console.log('未找到匹配项');
 				}
 
 				var date = new Date();
@@ -1226,6 +1289,7 @@
 			}
 
 			$('#start').on('click', function() {
+				document.getElementById('recording-indicator').style.display = 'block';
 				window.AsrSDK.authUseMicrophone().then(res => {
 					console.log('==>授权成功', res)
 				}).catch(err => {
@@ -1271,7 +1335,7 @@
 						$('#start').show();
 						// $('#connecting').hide();
 					},
-					projectId: "6c316363-7ae5-11ef-a6c8-27951f5caff7"
+					projectId: "7ded6353-885d-11ef-9cbf-37ef51ac5ef0"
 				});
 				asr.setIsDebug(true)
 				const areaDom = $('.message-input');
@@ -1299,6 +1363,7 @@
 				// textIdInput.value = textValue;
 				// element.textContent = ""; 
 				// element.innerHTML = "";
+				document.getElementById('recording-indicator').style.display = 'none';
 				$(this).hide();
 				$('#recognizing').hide();
 				$('#start').show();
